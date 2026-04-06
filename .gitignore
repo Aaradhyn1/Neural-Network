@@ -1,31 +1,70 @@
-# Python cache/build
+# ==========================================
+# Advanced Python .gitignore
+# ==========================================
+
+# --- Python Build / Cache / Bytecode ---
 __pycache__/
 *.py[cod]
+*$py.class
 *.so
-*.egg-info/
+.Python
 build/
+develop-eggs/
 dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Virtual environments
+# --- Virtual Environments ---
 .venv/
 venv/
 env/
+ENV/
+env.bak/
+venv.bak/
 
-# Tool caches
+# --- IDE / OS Specific ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+.settings/
+
+# --- Tools & Testing ---
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.tox/
 .coverage
 htmlcov/
+.hypothesis/
 
-# IDE / OS
-.vscode/
-.idea/
-.DS_Store
-
-# Data artifacts
+# --- Data Science / ML Artifacts ---
 checkpoints/
 logs/
 *.pt
 *.pth
 *.ckpt
+data/raw/
+data/processed/
+*.h5
+*.keras
+*.pkl
+*.npy
+
+# --- Environment Variables / Secrets ---
+.env
+.env.local
+.env.*.local
+! .env.example
