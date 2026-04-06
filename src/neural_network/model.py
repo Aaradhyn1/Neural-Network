@@ -5,8 +5,6 @@ from torch import nn
 
 
 class FeedForwardNetwork(nn.Module):
-    """A simple MLP for binary classification."""
-
     def __init__(self, input_size: int, hidden_size: int = 32, dropout: float = 0.1) -> None:
         super().__init__()
         self.net = nn.Sequential(
