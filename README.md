@@ -10,10 +10,20 @@ A production-style, from-scratch Deep Neural Network implementation using only *
 - **ReLU + Sigmoid** default stack for binary classification.
 - **Forward propagation + backpropagation** with explicit matrix calculus.
 - **Optimizers:** SGD and Adam.
-- **Training stability improvements:** optional gradient clipping, L2 weight decay, cosine LR decay.
-- **Loss:** Binary Cross-Entropy (BCE).
-- **Training logs** every 100 epochs.
-- **Demo task:** 4-bit parity (a non-linear classification problem).
+- **Training stability improvements:** gradient clipping, L2 weight decay, cosine LR decay, and early stopping.
+- **Evaluation metrics:** accuracy, precision, recall, and F1.
+- **Data prep utilities:** missing-value imputation, min-max normalization, and train/val/test splitting.
+
+## 8-Step Workflow (Implemented)
+
+1. **Define problem**: binary classification target (parity/churn-style yes/no).  
+2. **Collect & preprocess data**: use `preprocessing.py` for imputation + scaling.  
+3. **Prepare train/val/test splits**: `train_val_test_split` utility.  
+4. **Initialize parameters**: He/Xavier-style random initialization in model layers.  
+5. **Forward propagation**: dense linear transforms + activation functions.  
+6. **Cost function**: binary cross-entropy.  
+7. **Training**: backprop + Adam/SGD + regularization + LR scheduling.  
+8. **Evaluation**: accuracy/precision/recall/F1 on held-out data.  
 
 ## Project Structure
 
@@ -21,8 +31,10 @@ A production-style, from-scratch Deep Neural Network implementation using only *
 .
 ├── src/neural_network/model.py          # Layer + NeuralNetwork implementation
 ├── src/neural_network/model_library.py  # Named model presets
+├── src/neural_network/preprocessing.py  # Impute/normalize/split utilities
+├── src/neural_network/metrics.py        # Accuracy/precision/recall/F1
 ├── src/neural_network/data.py           # 4-bit parity dataset + batching
-├── src/neural_network/train.py          # BCE, training loop, demo
+├── src/neural_network/train.py          # BCE, training loop, early stopping
 ├── scripts/train.py                     # CLI training entrypoint
 ├── scripts/evaluate.py                  # CLI evaluation
 ├── scripts/predict.py                   # CLI prediction
@@ -40,13 +52,3 @@ python scripts/train.py --model llm_wide --epochs 1200 --optimizer adam --output
 python scripts/evaluate.py --model-path checkpoints/model.pkl
 python scripts/predict.py --model-path checkpoints/model.pkl --features 1 0 1 0
 ```
-
-## Notes on Backpropagation
-
-For a dense layer with input `X`, weights `W`, biases `b`, and pre-activation `Z = XW + b`:
-
-- `dW = X^T · dZ / m`
-- `db = sum(dZ) / m`
-- `dX = dZ · W^T`
-
-These transposes ensure shape alignment while applying the chain rule layer-by-layer.

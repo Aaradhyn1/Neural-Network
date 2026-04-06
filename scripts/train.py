@@ -22,6 +22,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--grad-clip", type=float, default=1.0)
     parser.add_argument("--no-cosine-lr", action="store_true")
+    parser.add_argument("--early-stopping-patience", type=int, default=200)
     parser.add_argument("--output", type=Path, default=Path("checkpoints/model.pkl"))
     return parser.parse_args()
 
@@ -37,6 +38,7 @@ def main() -> None:
         weight_decay=args.weight_decay,
         grad_clip=args.grad_clip,
         use_cosine_lr=not args.no_cosine_lr,
+        early_stopping_patience=args.early_stopping_patience,
     )
     score = accuracy(model, bits=args.input_size)
 
