@@ -1,9 +1,14 @@
 from __future__ import annotations
 
 import argparse
+import pickle
+import sys
 from pathlib import Path
 
-import torch
+import numpy as np
+
+if __package__ is None or __package__ == "":
+    sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
 
 from neural_network.model import FeedForwardNetwork
 
@@ -23,22 +28,19 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    payload = torch.load(args.model_path, map_location="cpu")
-    input_size = payload["input_size"]
+    with args.model_path.open("rb") as f:
+        payload = pickle.load(f)
 
+    input_size = int(payload["input_size"])
     if len(args.features) != input_size:
         raise ValueError(f"Expected {input_size} features, got {len(args.features)}")
 
-    model = FeedForwardNetwork(input_size=input_size)
-    model.load_state_dict(payload["state_dict"])
-    model.eval()
-
-    x = torch.tensor([args.features], dtype=torch.float32)
-    with torch.no_grad():
-        prob = torch.sigmoid(model(x)).item()
+    model = FeedForwardNetwork.from_state_dict(input_size=input_size, state=payload["state"])
+    x = np.array([args.features], dtype=np.float64)
+    prob = float(model.predict_proba(x)[0, 0])
 
     print(f"Predicted probability: {prob:.4f}")
-    print(f"Predicted class: {int(prob > 0.5)}")
+    print(f"Predicted class: {int(prob >= 0.5)}")
 
 
 if __name__ == "__main__":

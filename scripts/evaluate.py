@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import argparse
+import pickle
+import sys
 from pathlib import Path
 
-import torch
+if __package__ is None or __package__ == "":
+    sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
 
 from neural_network.model import FeedForwardNetwork
 from neural_network.train import accuracy
@@ -17,11 +20,12 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    payload = torch.load(args.model_path, map_location="cpu")
-    model = FeedForwardNetwork(input_size=payload["input_size"])
-    model.load_state_dict(payload["state_dict"])
+    with args.model_path.open("rb") as f:
+        payload = pickle.load(f)
 
-    score = accuracy(model)
+    input_size = int(payload["input_size"])
+    model = FeedForwardNetwork.from_state_dict(input_size=input_size, state=payload["state"])
+    score = accuracy(model, bits=input_size)
     print(f"Accuracy: {score:.3f}")
 
 

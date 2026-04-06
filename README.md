@@ -1,62 +1,52 @@
-# Neural-Network (Python)
+# Neural-Network (Python + NumPy)
 
-A clean starter repository for training, evaluating, and running a feed-forward neural network with PyTorch.
+A production-style, from-scratch Deep Neural Network implementation using only **NumPy**.
+
+## Highlights
+
+- **Modular architecture** with reusable `Layer` and `NeuralNetwork` classes.
+- **Model library presets** (`tiny`, `parity`, `deep`, `llm_wide`) for broader/wider architectures.
+- **He initialization** for ReLU/Leaky-ReLU hidden layers.
+- **ReLU + Sigmoid** default stack for binary classification.
+- **Forward propagation + backpropagation** with explicit matrix calculus.
+- **Optimizers:** SGD and Adam.
+- **Training stability improvements:** optional gradient clipping, L2 weight decay, cosine LR decay.
+- **Loss:** Binary Cross-Entropy (BCE).
+- **Training logs** every 100 epochs.
+- **Demo task:** 4-bit parity (a non-linear classification problem).
 
 ## Project Structure
 
 ```text
 .
-├── .github/workflows/ci.yml      # Lint + test in GitHub Actions
-├── src/neural_network/            # Reusable Python package
-├── scripts/                       # CLI scripts (train, evaluate, predict)
-├── tests/                         # Unit tests
-├── data/                          # Data directory (keep your datasets here)
-├── requirements.txt               # Runtime dependencies
-├── requirements-dev.txt           # Dev dependencies
-├── pyproject.toml                 # Tooling and packaging config
-└── README.md
+├── src/neural_network/model.py          # Layer + NeuralNetwork implementation
+├── src/neural_network/model_library.py  # Named model presets
+├── src/neural_network/data.py           # 4-bit parity dataset + batching
+├── src/neural_network/train.py          # BCE, training loop, demo
+├── scripts/train.py                     # CLI training entrypoint
+├── scripts/evaluate.py                  # CLI evaluation
+├── scripts/predict.py                   # CLI prediction
+└── tests/                               # Unit tests
 ```
 
 ## Quick Start
-
-1. Create a virtual environment and install dependencies:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-dev.txt
+pytest
+python scripts/train.py --model llm_wide --epochs 1200 --optimizer adam --output checkpoints/model.pkl
+python scripts/evaluate.py --model-path checkpoints/model.pkl
+python scripts/predict.py --model-path checkpoints/model.pkl --features 1 0 1 0
 ```
 
-2. Train a demo model on synthetic data:
+## Notes on Backpropagation
 
-```bash
-python scripts/train.py --epochs 40 --output checkpoints/model.pt
-```
+For a dense layer with input `X`, weights `W`, biases `b`, and pre-activation `Z = XW + b`:
 
-3. Evaluate the model:
+- `dW = X^T · dZ / m`
+- `db = sum(dZ) / m`
+- `dX = dZ · W^T`
 
-```bash
-python scripts/evaluate.py --model-path checkpoints/model.pt
-```
-
-4. Run prediction:
-
-```bash
-python scripts/predict.py --model-path checkpoints/model.pt --features 0.1 0.2 -0.3 0.4
-```
-
-## Using Your Own Files/Data
-
-- Put your dataset files into `data/`.
-- Extend `src/neural_network/data.py` to load your specific format.
-- Keep your custom models in `src/neural_network/model.py` or add additional modules.
-- Keep scripts in `scripts/` for reproducible training and inference workflows.
-
-## GitHub Setup
-
-This repository includes:
-- a Python-focused `.gitignore`
-- formatting/lint/test configuration in `pyproject.toml`
-- a CI workflow at `.github/workflows/ci.yml`
-
-Push this branch to GitHub and Actions will run automatically on push/PR.
+These transposes ensure shape alignment while applying the chain rule layer-by-layer.
