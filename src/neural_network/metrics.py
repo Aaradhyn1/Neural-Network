@@ -10,7 +10,10 @@ def accuracy_score(y_true: Array, y_pred_binary: NDArray[np.int64]) -> float:
     return float(np.mean(y_pred_binary == y_true.astype(np.int64)))
 
 
-def precision_recall_f1(y_true: Array, y_pred_binary: NDArray[np.int64]) -> tuple[float, float, float]:
+def precision_recall_f1(
+    y_true: Array,
+    y_pred_binary: NDArray[np.int64],
+) -> tuple[float, float, float]:
     y_true_i = y_true.astype(np.int64).reshape(-1)
     y_pred_i = y_pred_binary.astype(np.int64).reshape(-1)
 

@@ -17,7 +17,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--epochs", type=int, default=2000)
     parser.add_argument("--lr", type=float, default=0.01)
     parser.add_argument("--input-size", type=int, default=4)
-    parser.add_argument("--model", choices=["tiny", "parity", "deep", "llm_wide"], default="llm_wide")
+    parser.add_argument(
+        "--model",
+        choices=["tiny", "parity", "deep", "llm_wide"],
+        default="llm_wide",
+    )
     parser.add_argument("--optimizer", choices=["sgd", "adam"], default="adam")
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--grad-clip", type=float, default=1.0)

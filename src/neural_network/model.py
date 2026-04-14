@@ -38,7 +38,12 @@ class Layer:
 
     def __init__(self, config: LayerConfig, rng: np.random.Generator) -> None:
         self.config = config
-        self.weights = self._init_weights(config.in_features, config.out_features, config.activation, rng)
+        self.weights = self._init_weights(
+            config.in_features,
+            config.out_features,
+            config.activation,
+            rng,
+        )
         self.biases = np.zeros((1, config.out_features), dtype=np.float64)
 
         self._last_input: Array | None = None
@@ -147,7 +152,9 @@ class NeuralNetwork:
         seed: int = 42,
     ) -> None:
         if output_size != 1:
-            raise ValueError("This implementation is for binary classification with one output neuron.")
+            raise ValueError(
+                "This implementation is for binary classification with one output neuron."
+            )
 
         layer_sizes = (input_size, *hidden_sizes, output_size)
         rng = np.random.default_rng(seed)
@@ -223,7 +230,7 @@ class NeuralNetwork:
         }
 
     @classmethod
-    def from_state_dict(cls, input_size: int, state: dict[str, object]) -> "NeuralNetwork":
+    def from_state_dict(cls, input_size: int, state: dict[str, object]) -> NeuralNetwork:
         layer_payload = state["layers"]
         if not isinstance(layer_payload, list) or not layer_payload:
             raise ValueError("state_dict has invalid layer payload")
@@ -238,7 +245,7 @@ class NeuralNetwork:
             output_size=output_size,
             output_activation=output_activation,
         )
-        for layer, layer_state in zip(model.layers, layer_payload):
+        for layer, layer_state in zip(model.layers, layer_payload, strict=True):
             layer.weights = layer_state["weights"].copy()
             layer.biases = layer_state["biases"].copy()
         return model
