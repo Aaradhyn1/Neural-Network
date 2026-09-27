@@ -1,4 +1,4 @@
-"""Neural network starter package."""
+"""Neural Network Starter Package."""
 
 from .model import FeedForwardNetwork
 
